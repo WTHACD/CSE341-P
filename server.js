@@ -3,7 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const mongodb = require('./dbase/connect');
 const swaggerUi = require('swagger-ui-express');
-const fs = require('fs');
+const swaggerDocument = require('./swagger.json'); // Use require to load and parse JSON
 
 app.use(express.json());
 
@@ -15,23 +15,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// This route serves the swagger.json file with no-cache headers
-app.get('/swagger-spec.json', (req, res) => {
-  const swaggerFile = fs.readFileSync('./swagger.json', 'utf8');
-  const swaggerDocument = JSON.parse(swaggerFile);
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.json(swaggerDocument);
-});
-
-// Set up Swagger UI to fetch the spec from our new no-cache route
-const options = {
-  swaggerOptions: {
-    url: '/swagger-spec.json',
-  },
-};
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, options));
+// --- Robust Swagger UI Setup ---
+// This logic removes the host and schemes from the swagger.json at runtime.
+// This makes the Swagger UI work correctly on any host (localhost, Render, etc.).
+delete swaggerDocument.host;
+delete swaggerDocument.schemes;
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// --------------------------------
 
 app.use('/', require('./routes'));
 
