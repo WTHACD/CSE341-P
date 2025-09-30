@@ -5,10 +5,10 @@
     "description": "API for managing menu items and customer orders for a restaurant.",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "cse341-p-wfbq.onrender.com",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/menuItems/": {

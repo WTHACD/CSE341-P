@@ -5,8 +5,8 @@ const doc = {
     title: 'Restaurant Order System API',
     description: 'API for managing menu items and customer orders for a restaurant.',
   },
-  host: 'localhost:3000', // Change this to your deployed host
-  schemes: ['http'],      // Change this to ['https'_] for production
+  host: 'cse341-p-wfbq.onrender.com',
+  schemes: ['https'],
 };
 
 const outputFile = './swagger.json';

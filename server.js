@@ -9,6 +9,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+app.options('*', cors()); // Enable pre-flight for all routes
 app.use(bodyParser.json());
 
 // Middleware to attach db object to every request
