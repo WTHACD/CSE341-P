@@ -1,0 +1,162 @@
+## Fase 1: Planificación y Configuración 📝
+(Tiempo estimado: 1-2 horas)
+
+El objetivo aquí es tener una base sólida antes de escribir la lógica principal.
+
+Define tu Tema: Decide sobre qué será tu API. Necesitas dos colecciones. Por ejemplo:
+
+Colección 1: products (con 7+ campos: name, description, price, category, stock, supplier, entryDate).
+
+Colección 2: suppliers (con campos: name, contactPerson, phone, email).
+
+Configura la Base de Datos:
+
+Ve a MongoDB Atlas o Compass.
+
+Crea una nueva base de datos para este proyecto (ej: project2_db).
+
+Crea las dos colecciones que definiste (products, suppliers). Puedes dejarlas vacías por ahora.
+
+Inicia el Proyecto Node.js:
+
+En tu terminal, crea una nueva carpeta y ejecuta npm init -y.
+
+Crea la estructura de carpetas: routes, controllers, db.
+
+Instala las Dependencias Esenciales:
+
+Bash
+
+npm install express mongodb dotenv body-parser cors
+Configura el Entorno Seguro:
+
+Crea un archivo .gitignore y añade node_modules/ y .env.
+
+Crea un archivo .env en la raíz.
+
+Dentro de .env, añade tu cadena de conexión de MongoDB: MONGODB_URI=mongodb+srv://...
+
+Establece la Conexión a la Base de Datos:
+
+En la carpeta db, crea connect.js y escribe el código para conectar a MongoDB usando process.env.MONGODB_URI.
+
+Crea el Servidor Básico:
+
+Crea server.js. Configura express, el puerto, body-parser, cors y conecta tus rutas principales. Asegúrate de que el servidor se inicie correctamente.
+
+## Fase 2: Desarrollo del CRUD 💻
+(Tiempo estimado: 3-4 horas)
+
+Enfócate en una colección primero (ej: products). Haz que funcione por completo y luego replica el proceso para la segunda.
+
+Crea las Rutas (GET y POST):
+
+En routes/products.js, define las rutas:
+
+GET /products (para obtener todos).
+
+GET /products/{id} (para obtener uno).
+
+POST /products (para crear uno nuevo).
+
+Crea los Controladores (GET y POST):
+
+En controllers/products.js, escribe la lógica para esas tres funciones:
+
+getAll: Usa .find() para obtener todos los documentos de la colección products.
+
+getSingle: Usa .find({_id: req.params.id}) para obtener un documento.
+
+create: Usa .insertOne(req.body) para crear un nuevo documento.
+
+Prueba cada ruta con Postman o Insomnia a medida que la terminas.
+
+Implementa las Rutas (PUT y DELETE):
+
+En routes/products.js, añade las rutas:
+
+PUT /products/{id} (para actualizar).
+
+DELETE /products/{id} (para eliminar).
+
+Implementa los Controladores (PUT y DELETE):
+
+En controllers/products.js, escribe la lógica para:
+
+update: Usa .replaceOne({_id: req.params.id}, req.body).
+
+delete: Usa .deleteOne({_id: req.params.id}).
+
+Prueba estas nuevas rutas exhaustivamente.
+
+Repite para la Segunda Colección:
+
+Crea routes/suppliers.js y controllers/suppliers.js.
+
+Copia y adapta la lógica que ya creaste para la colección products. Este paso será mucho más rápido.
+
+## Fase 3: Calidad y Documentación ✨
+(Tiempo estimado: 2-3 horas)
+
+Ahora que la funcionalidad básica está lista, añádele las capas de profesionalismo requeridas.
+
+Añade Validación de Datos:
+
+En tus controladores POST y PUT, antes de enviar los datos a la base de datos, añade if statements para verificar que los campos requeridos existan en req.body.
+
+Si un campo falta, envía una respuesta de error 400 con un mensaje claro (ej: res.status(400).send('Product name is required')).
+
+Añade Manejo de Errores:
+
+Envuelve el código de tus controladores que interactúa con la base de datos en un bloque try...catch.
+
+Si ocurre un error en el try (ej: la base de datos está caída), el catch debe enviar una respuesta de error 500 (Error del Servidor).
+
+Crea la Documentación de la API (Swagger):
+
+Instala los paquetes necesarios: npm install swagger-ui-express swagger-autogen.
+
+Crea un archivo swagger.js para autogenerar la documentación a partir de tus archivos de rutas.
+
+Añade una ruta en server.js (ej: /api-docs) para servir la interfaz de Swagger UI.
+
+Actualiza la documentación para incluir todas tus rutas (GET, POST, PUT, DELETE) para ambas colecciones.
+
+## Fase 4: Despliegue y Entrega 🚀
+(Tiempo estimado: 1-2 horas)
+
+Los últimos pasos para finalizar y entregar tu trabajo.
+
+Prepara para el Despliegue:
+
+Asegúrate de que tu package.json tenga un start script: "start": "node server.js".
+
+Haz push de todo tu código a tu repositorio de GitHub.
+
+Publica en Render:
+
+Crea un nuevo "Web Service" en Render y conéctalo a tu repositorio de GitHub.
+
+En la configuración de Render, establece el "Start Command" en node server.js.
+
+Ve a la sección "Environment" y añade tu MONGODB_URI como una variable de entorno. No subas tu archivo .env a GitHub.
+
+Graba tu Video de Demostración:
+
+Planifica un video corto (5-8 min).
+
+Muestra tu código (estructura de carpetas).
+
+Usa Postman o Insomnia para probar cada una de las rutas CRUD en tu URL de Render publicada. Demuestra que funcionan (crear, ver, actualizar, eliminar).
+
+Muestra una prueba de validación fallida (ej: intentar crear un producto sin nombre).
+
+Muestra tu documentación de Swagger funcionando.
+
+Sube el video a YouTube (Público o No listado).
+
+Envía la Tarea:
+
+Reúne los tres enlaces: tu repositorio de GitHub, tu URL de Render y tu video de YouTube.
+
+Envíalos en Canvas. ¡Listo!

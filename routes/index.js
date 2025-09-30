@@ -1,12 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// Welcome route
-router.get('/', (req, res) => {
-    res.send('Welcome to the CSE341-P API');
-});
-
-// Contacts routes
-router.use('/contacts', require('./contacts'));
+router.use('/menuItems', require('./menuItems'));
+router.use('/orders', require('./orders'));
 
 module.exports = router;

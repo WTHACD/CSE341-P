@@ -1,36 +1,42 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const { connectToDb, getDb } = require('./db/connect');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 const app = express();
 const port = process.env.PORT || 3000;
-const mongodb = require('./dbase/connect');
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json'); // Use require to load and parse JSON
 
-app.use(express.json());
+app.use(cors());
+app.use(bodyParser.json());
 
-// CORS Headers Middleware
+// Middleware to attach db object to every request
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  next();
+    try {
+        req.db = getDb();
+        next();
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
-// --- Robust Swagger UI Setup ---
-// This logic removes the host and schemes from the swagger.json at runtime.
-// This makes the Swagger UI work correctly on any host (localhost, Render, etc.).
-delete swaggerDocument.host;
-delete swaggerDocument.schemes;
+// Swagger Docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-// --------------------------------
 
+// Routes
 app.use('/', require('./routes'));
 
-mongodb.initDb((err) => {
-    if (err) {
-        console.log(err);
-    } else {
+
+connectToDb((err) => {
+    if (!err) {
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
         });
+    } else {
+        console.error('Failed to connect to database:', err);
+        process.exit(1);
     }
 });
+
+// Test comment to verify git push
