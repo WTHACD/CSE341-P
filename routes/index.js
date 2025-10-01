@@ -5,15 +5,22 @@ const passport = require('passport');
 // --- Auth Routes ---
 // Check authentication status
 router.get('/auth/status', /* #swagger.tags = ['Authentication'] */ (req, res) => {
+  console.log('Status Check - Session:', req.session);
+  console.log('Status Check - User:', req.user);
+  console.log('Status Check - Is Authenticated:', req.isAuthenticated());
+  
   if (req.isAuthenticated()) {
     res.status(200).json({
       isAuthenticated: true,
-      user: req.user
+      user: req.user,
+      sessionID: req.sessionID
     });
   } else {
     res.status(401).json({
       isAuthenticated: false,
-      message: 'Not authenticated'
+      message: 'Not authenticated',
+      session: req.session ? 'Session exists' : 'No session',
+      sessionID: req.sessionID || 'No session ID'
     });
   }
 });
@@ -35,7 +42,18 @@ router.get('/auth/github/callback', /* #swagger.tags = ['Authentication'] */
     session: true
   }),
   (req, res) => {
-    res.redirect('/api-docs');
+    // Log para depuración
+    console.log('Auth callback - User:', req.user);
+    console.log('Auth callback - Session:', req.session);
+    
+    // Forzar guardado de sesión
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        return res.status(500).json({ error: 'Failed to save session' });
+      }
+      res.redirect('/api-docs');
+    });
   }
 );
 

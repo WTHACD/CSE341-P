@@ -22,18 +22,19 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // Session setup
+app.set('trust proxy', 1); // trust first proxy
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    proxy: true, // Required for Render deployment
+    resave: true,
+    saveUninitialized: true,
+    proxy: true,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'none', // Required for cross-site cookies
-      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
+      sameSite: 'none',
     },
     name: 'sessionId'
   })
@@ -42,6 +43,14 @@ app.use(
 // Passport setup
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Debug middleware to log session and auth status
+app.use((req, res, next) => {
+  console.log('Session ID:', req.sessionID);
+  console.log('Is Authenticated:', req.isAuthenticated());
+  console.log('Session:', req.session);
+  next();
+});
 
 // Middleware to attach db object to every request
 app.use((req, res, next) => {
