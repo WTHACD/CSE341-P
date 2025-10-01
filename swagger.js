@@ -6,7 +6,7 @@ const doc = {
     description: `API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.
     
     Authentication Instructions:
-    1. To login: Visit /login directly in your browser
+    1. To login: Visit Authorize directly in your browser
     2. Check authentication status: Use the /auth/status endpoint
     3. To logout: Use the /logout endpoint
     
