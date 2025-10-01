@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Restaurant Order System API",
-    "description": "API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.",
+    "description": "API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.\n    \n    Authentication Instructions:\n    1. To login: Visit /login directly in your browser\n    2. Check authentication status: Use the /auth/status endpoint\n    3. To logout: Use the /logout endpoint\n    \n    Note: POST, PUT, and DELETE operations require authentication.",
     "version": "1.0.0"
   },
   "host": "cse341-p-wfbq.onrender.com",
@@ -45,32 +45,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          }
-        }
-      }
-    },
-    "/login": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "description": "Inicia el proceso de autenticación con GitHub. ⚠️ NOTA: Este endpoint no debe llamarse desde Swagger UI. En su lugar, visita /login directamente en tu navegador.",
-        "responses": {
-          "302": {
-            "description": "Redirección a la página de login de GitHub"
-          }
-        }
-      }
-    },
-    "/auth/github/callback": {
-      "get": {
-        "tags": [
-          "Authentication"
-        ],
-        "description": "",
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }

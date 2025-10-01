@@ -3,7 +3,14 @@ const swaggerAutogen = require('swagger-autogen')();
 const doc = {
   info: {
     title: 'Restaurant Order System API',
-    description: 'API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.',
+    description: `API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.
+    
+    Authentication Instructions:
+    1. To login: Visit /login directly in your browser
+    2. Check authentication status: Use the /auth/status endpoint
+    3. To logout: Use the /logout endpoint
+    
+    Note: POST, PUT, and DELETE operations require authentication.`,
     version: '1.0.0',
   },
   host: 'cse341-p-wfbq.onrender.com',

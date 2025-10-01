@@ -27,13 +27,7 @@ router.get('/auth/status', /* #swagger.tags = ['Authentication'] */ (req, res) =
 
 // Redirects to GitHub for authentication
 router.get('/login', 
-  /* 
-    #swagger.tags = ['Authentication']
-    #swagger.description = 'Inicia el proceso de autenticación con GitHub. ⚠️ NOTA: Este endpoint no debe llamarse desde Swagger UI. En su lugar, visita /login directamente en tu navegador.'
-    #swagger.responses[302] = {
-      description: 'Redirección a la página de login de GitHub'
-    }
-  */
+  /* #swagger.ignore = true */
   (req, res, next) => {
     passport.authenticate('github', {
       successReturnToOrRedirect: '/api-docs',
@@ -43,7 +37,7 @@ router.get('/login',
   });
 
 // GitHub callback route
-router.get('/auth/github/callback', /* #swagger.tags = ['Authentication'] */
+router.get('/auth/github/callback', /* #swagger.ignore = true */
   passport.authenticate('github', { 
     failureRedirect: '/api-docs',
     failureMessage: true,
