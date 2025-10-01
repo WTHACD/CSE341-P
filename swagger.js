@@ -13,6 +13,8 @@ const doc = {
     Note: POST, PUT, and DELETE operations require authentication.`,
     version: '1.0.0',
   },
+  hideModels: true, // Oculta la sección de modelos
+  hideSchemas: true, // Oculta los schemas
   host: 'cse341-p-wfbq.onrender.com',
   schemes: ['https'],
   tags: [
@@ -37,29 +39,7 @@ const doc = {
       description: 'GitHub OAuth2 Authentication'
     }
   },
-  definitions: {
-    MenuItem: {
-      type: 'object',
-      properties: {
-        name: { type: 'string', example: 'Pizza Margherita' },
-        description: { type: 'string', example: 'Classic pizza...' },
-        price: { type: 'number', example: 12.50 },
-        category: { type: 'string', example: 'Pizzas' },
-        stock: { type: 'number', example: 50 },
-        supplier: { type: 'string', example: 'Napoli Supplies' },
-        entryDate: { type: 'string', example: '2025-09-26' }
-      }
-    },
-    Order: {
-      type: 'object',
-      properties: {
-        items: { type: 'array', items: { type: 'string' }, example: ['60c72b2f9b1d8c001f8e4d2a'] },
-        tableNumber: { type: 'number', example: 5 },
-        status: { type: 'string', example: 'received' },
-        notes: { type: 'string', example: 'Extra cheese' }
-      }
-    }
-  },
+
   tags: [
     {
       name: 'Authentication',
