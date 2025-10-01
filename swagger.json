@@ -5,7 +5,7 @@
     "description": "API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.",
     "version": "1.0.0"
   },
-  "host": "localhost:3000",
+  "host": "cse341-p-wfbq.onrender.com",
   "basePath": "/",
   "tags": [
     {
@@ -22,7 +22,7 @@
     }
   ],
   "schemes": [
-    "http"
+    "https"
   ],
   "securityDefinitions": {
     "githubAuth": {

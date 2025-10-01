@@ -6,8 +6,8 @@ const doc = {
     description: 'API for managing menu items and customer orders for a restaurant. This API requires authentication for POST, PUT, and DELETE operations.',
     version: '1.0.0',
   },
-  host: process.env.NODE_ENV === 'production' ? 'cse341-p-wfbq.onrender.com' : 'localhost:3000',
-  schemes: [process.env.NODE_ENV === 'production' ? 'https' : 'http'],
+  host: 'cse341-p-wfbq.onrender.com',
+  schemes: ['https'],
   tags: [
     {
       name: "Authentication",

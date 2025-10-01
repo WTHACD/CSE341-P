@@ -12,7 +12,12 @@ const swaggerDocument = require('./swagger.json');
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS configuration
+app.use(cors({
+  origin: ['https://cse341-p-wfbq.onrender.com', 'http://localhost:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // Session setup
