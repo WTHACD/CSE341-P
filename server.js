@@ -28,8 +28,10 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: process.env.NODE_ENV === 'production',
-      httpOnly: true
-    }
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    },
+    name: 'sessionId' // Change cookie name from connect.sid
   })
 );
 
