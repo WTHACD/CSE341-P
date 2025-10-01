@@ -54,10 +54,10 @@
         "tags": [
           "Authentication"
         ],
-        "description": "",
+        "description": "Inicia el proceso de autenticación con GitHub. ⚠️ NOTA: Este endpoint no debe llamarse desde Swagger UI. En su lugar, visita /login directamente en tu navegador.",
         "responses": {
-          "default": {
-            "description": ""
+          "302": {
+            "description": "Redirección a la página de login de GitHub"
           }
         }
       }
@@ -69,8 +69,8 @@
         ],
         "description": "",
         "responses": {
-          "default": {
-            "description": ""
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
