@@ -14,9 +14,10 @@ const port = process.env.PORT || 3000;
 
 // CORS configuration
 app.use(cors({
-  origin: ['https://cse341-p-wfbq.onrender.com', 'http://localhost:3000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  origin: true, // This allows all origins
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(bodyParser.json());
 
@@ -26,12 +27,15 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true, // Required for Render deployment
     cookie: {
       secure: process.env.NODE_ENV === 'production',
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'none', // Required for cross-site cookies
+      domain: process.env.NODE_ENV === 'production' ? '.onrender.com' : undefined
     },
-    name: 'sessionId' // Change cookie name from connect.sid
+    name: 'sessionId'
   })
 );
 
@@ -64,10 +68,13 @@ passport.use(
       callbackURL: process.env.NODE_ENV === 'production'
         ? 'https://cse341-p-wfbq.onrender.com/auth/github/callback'
         : 'http://localhost:3000/auth/github/callback',
+      scope: ['user:email'] // Request email scope
     },
     function (accessToken, refreshToken, profile, done) {
-      // In a real app, you would find or create a user in your database
-      // For this example, we'll just pass the profile along.
+      // Log the profile for debugging
+      console.log('GitHub Profile:', profile);
+      // Store the access token in the profile
+      profile.accessToken = accessToken;
       return done(null, profile);
     }
   )
