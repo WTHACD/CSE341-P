@@ -79,5 +79,7 @@ router.get('/logout', /* #swagger.tags = ['Authentication'] */ (req, res, next) 
 
 router.use('/menuItems', require('./menuItems'));
 router.use('/orders', require('./orders'));
+router.use('/tables', /* #swagger.tags = ['Tables'] */ require('./tables'));
+router.use('/employees', /* #swagger.tags = ['Employees'] */ require('./employees'));
 
 module.exports = router;

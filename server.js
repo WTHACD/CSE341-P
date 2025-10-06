@@ -98,15 +98,19 @@ passport.deserializeUser((obj, done) => {
   done(null, obj);
 });
 
-connectToDb((err) => {
-  if (!err) {
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
-    });
-  } else {
-    console.error('Failed to connect to database:', err);
-    process.exit(1);
-  }
-});
+// Only start the server if this file is run directly
+if (require.main === module) {
+    // Connect to database and start server
+    connectToDb()
+        .then(() => {
+            app.listen(port, () => {
+                console.log(`Server is running on port ${port}`);
+            });
+        })
+        .catch(console.error);
+}
+
+// Export the app for testing
+module.exports = app;
 
 
