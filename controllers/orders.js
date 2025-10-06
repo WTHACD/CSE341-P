@@ -71,11 +71,60 @@ const validateOrderForUpdate = (order) => {
 // GET all orders
 const getAll = async (req, res) => {
     try {
-        const result = await req.db.collection('orders').find();
-        result.toArray().then((lists) => {
-            res.setHeader('Content-Type', 'application/json');
-            res.status(200).json(lists);
-        });
+        const orders = await req.db.collection('orders').find().toArray();
+        
+        // Enriquecer las órdenes con información adicional
+        const enrichedOrders = await Promise.all(orders.map(async (order) => {
+            // Obtener información del empleado
+            const employee = order.employeeId ? 
+                await req.db.collection('employees').findOne(
+                    { _id: new ObjectId(order.employeeId) },
+                    { projection: { firstName: 1, lastName: 1, role: 1 } }
+                ) : null;
+
+            // Obtener información de la mesa
+            const table = order.tableId ?
+                await req.db.collection('tables').findOne(
+                    { _id: new ObjectId(order.tableId) },
+                    { projection: { tableNumber: 1, location: 1 } }
+                ) : null;
+
+            // Obtener información de los items del menú
+            const enrichedItems = await Promise.all(order.items.map(async (item) => {
+                const menuItem = item.menuItemId ?
+                    await req.db.collection('menuItems').findOne(
+                        { _id: new ObjectId(item.menuItemId) },
+                        { projection: { name: 1, price: 1 } }
+                    ) : null;
+                
+                return {
+                    ...item,
+                    menuItem: menuItem ? {
+                        name: menuItem.name,
+                        price: menuItem.price
+                    } : null
+                };
+            }));
+
+            return {
+                ...order,
+                employee: employee ? {
+                    id: order.employeeId,
+                    firstName: employee.firstName,
+                    lastName: employee.lastName,
+                    role: employee.role
+                } : null,
+                table: table ? {
+                    id: order.tableId,
+                    number: table.tableNumber,
+                    location: table.location
+                } : null,
+                items: enrichedItems
+            };
+        }));
+
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(enrichedOrders);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -85,15 +134,61 @@ const getAll = async (req, res) => {
 const getSingle = async (req, res) => {
     try {
         const orderId = new ObjectId(req.params.id);
-        const result = await req.db.collection('orders').find({ _id: orderId });
-        result.toArray().then((lists) => {
-            if (lists.length > 0) {
-                res.setHeader('Content-Type', 'application/json');
-                res.status(200).json(lists[0]);
-            } else {
-                res.status(404).json({ message: 'Order not found' });
-            }
-        });
+        const order = await req.db.collection('orders').findOne({ _id: orderId });
+        
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Obtener información del empleado
+        const employee = order.employeeId ? 
+            await req.db.collection('employees').findOne(
+                { _id: new ObjectId(order.employeeId) },
+                { projection: { firstName: 1, lastName: 1, role: 1 } }
+            ) : null;
+
+        // Obtener información de la mesa
+        const table = order.tableId ?
+            await req.db.collection('tables').findOne(
+                { _id: new ObjectId(order.tableId) },
+                { projection: { tableNumber: 1, location: 1 } }
+            ) : null;
+
+        // Obtener información de los items del menú
+        const enrichedItems = await Promise.all(order.items.map(async (item) => {
+            const menuItem = item.menuItemId ?
+                await req.db.collection('menuItems').findOne(
+                    { _id: new ObjectId(item.menuItemId) },
+                    { projection: { name: 1, price: 1 } }
+                ) : null;
+            
+            return {
+                ...item,
+                menuItem: menuItem ? {
+                    name: menuItem.name,
+                    price: menuItem.price
+                } : null
+            };
+        }));
+
+        const enrichedOrder = {
+            ...order,
+            employee: employee ? {
+                id: order.employeeId,
+                firstName: employee.firstName,
+                lastName: employee.lastName,
+                role: employee.role
+            } : null,
+            table: table ? {
+                id: order.tableId,
+                number: table.tableNumber,
+                location: table.location
+            } : null,
+            items: enrichedItems
+        };
+
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(enrichedOrder);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -178,10 +273,39 @@ const deleteItem = async (req, res) => {
 };
 
 
+// GET available menu items for order creation
+const getAvailableItems = async (req, res) => {
+    try {
+        const availableItems = await req.db.collection('menuItems')
+            .find({ isAvailable: true })
+            .project({
+                name: 1,
+                price: 1,
+                category: 1,
+                description: 1
+            })
+            .toArray();
+
+        const formattedItems = availableItems.map(item => ({
+            id: item._id,
+            name: item.name,
+            price: item.price,
+            category: item.category,
+            description: item.description
+        }));
+
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(formattedItems);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 module.exports = {
     getAll,
     getSingle,
     create,
     update,
-    deleteItem
+    deleteItem,
+    getAvailableItems
 };

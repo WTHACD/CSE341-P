@@ -3,8 +3,20 @@ const router = express.Router();
 const ordersController = require('../controllers/orders');
 const { isAuthenticated } = require('../middleware/auth');
 
-router.get('/', /* #swagger.tags = ['Orders'] */ ordersController.getAll);
-router.get('/:id', /* #swagger.tags = ['Orders'] */ ordersController.getSingle);
+router.get('/', /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Get all orders with complete details including employee names, table information, and menu item details'
+*/ ordersController.getAll);
+
+router.get('/available-items', /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Get all available menu items to help create an order'
+*/ ordersController.getAvailableItems);
+
+router.get('/:id', /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Get a single order with complete details including employee names, table information, and menu item details'
+*/ ordersController.getSingle);
 router.post('/', isAuthenticated, /* 
     #swagger.tags = ['Orders']
     #swagger.description = 'Create a new order with menu items, table, and employee information'
