@@ -5,7 +5,39 @@ const { isAuthenticated } = require('../middleware/auth');
 
 router.get('/', /* #swagger.tags = ['Orders'] */ ordersController.getAll);
 router.get('/:id', /* #swagger.tags = ['Orders'] */ ordersController.getSingle);
-router.post('/', isAuthenticated, /* #swagger.tags = ['Orders'] */ /* #swagger.parameters['body'] = { in: 'body', schema: { items: ['60c72b2f9b1d8c001f8e4d2a'], tableNumber: 5, status: 'received', notes: 'Extra cheese' } } */ ordersController.create);
+router.post('/', isAuthenticated, /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Create a new order with menu items, table, and employee information'
+    #swagger.parameters['obj'] = {
+        in: 'body',
+        description: 'Order information',
+        required: true,
+        schema: {
+            $items: [
+                {
+                    menuItemId: '507f1f77bcf86cd799439011',
+                    quantity: 2,
+                    notes: 'Sin cebolla'
+                }
+            ],
+            tableId: '507f1f77bcf86cd799439012',
+            employeeId: '507f1f77bcf86cd799439013',
+            status: 'received',
+            specialInstructions: 'Cliente alérgico al maní',
+            total: 25.98
+        }
+    }
+    #swagger.responses[201] = {
+        description: 'Order successfully created',
+        schema: {
+            message: 'Order created successfully',
+            orderId: '507f1f77bcf86cd799439011'
+        }
+    }
+    #swagger.responses[400] = {
+        description: 'Invalid input'
+    }
+*/ ordersController.create);
 router.put('/:id', isAuthenticated, /* #swagger.tags = ['Orders'] */ /* #swagger.parameters['body'] = { in: 'body', schema: { status: 'preparing' } } */ ordersController.update);
 router.delete('/:id', isAuthenticated, /* #swagger.tags = ['Orders'] */ ordersController.deleteItem);
 

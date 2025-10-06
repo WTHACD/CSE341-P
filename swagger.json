@@ -306,45 +306,85 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Create a new order with menu items, table, and employee information",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Order information",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "items": {
                   "type": "array",
-                  "example": [
-                    "60c72b2f9b1d8c001f8e4d2a"
-                  ],
                   "items": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                      "menuItemId": {
+                        "type": "string",
+                        "example": "507f1f77bcf86cd799439011"
+                      },
+                      "quantity": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "notes": {
+                        "type": "string",
+                        "example": "Sin cebolla"
+                      }
+                    }
                   }
                 },
-                "tableNumber": {
-                  "type": "number",
-                  "example": 5
+                "tableId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439012"
+                },
+                "employeeId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439013"
                 },
                 "status": {
                   "type": "string",
                   "example": "received"
                 },
-                "notes": {
+                "specialInstructions": {
                   "type": "string",
-                  "example": "Extra cheese"
+                  "example": "Cliente alérgico al maní"
+                },
+                "total": {
+                  "type": "number",
+                  "example": 25.98
                 }
-              }
+              },
+              "required": [
+                "items"
+              ]
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Order successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Order created successfully"
+                },
+                "orderId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Invalid input"
           },
           "401": {
             "description": "Unauthorized"
@@ -1008,54 +1048,82 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Create a new order with menu items, table, and employee information",
         "parameters": [
           {
-            "name": "body",
+            "name": "obj",
             "in": "body",
+            "description": "Order information",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
                 "items": {
                   "type": "array",
-                  "example": [
-                    "60c72b2f9b1d8c001f8e4d2a"
-                  ],
                   "items": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                      "menuItemId": {
+                        "type": "string",
+                        "example": "507f1f77bcf86cd799439011"
+                      },
+                      "quantity": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "notes": {
+                        "type": "string",
+                        "example": "Sin cebolla"
+                      }
+                    }
                   }
                 },
-                "tableNumber": {
-                  "type": "number",
-                  "example": 5
+                "tableId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439012"
+                },
+                "employeeId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439013"
                 },
                 "status": {
                   "type": "string",
                   "example": "received"
                 },
-                "notes": {
+                "specialInstructions": {
                   "type": "string",
-                  "example": "Extra cheese"
+                  "example": "Cliente alérgico al maní"
+                },
+                "total": {
+                  "type": "number",
+                  "example": 25.98
                 }
-              }
+              },
+              "required": [
+                "items"
+              ]
             }
           }
         ],
         "responses": {
           "201": {
-            "description": "Created",
+            "description": "Order successfully created",
             "schema": {
               "type": "object",
               "properties": {
                 "message": {
                   "type": "string",
-                  "example": "Table created successfully"
+                  "example": "Order created successfully"
                 },
                 "employeeId": {
                   "type": "string",
                   "example": "507f1f77bcf86cd799439011"
                 },
                 "tableId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                },
+                "orderId": {
                   "type": "string",
                   "example": "507f1f77bcf86cd799439011"
                 }
@@ -1066,7 +1134,7 @@
             }
           },
           "400": {
-            "description": "Bad Request",
+            "description": "Invalid input",
             "schema": {
               "type": "object",
               "properties": {

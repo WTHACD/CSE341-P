@@ -1,17 +1,60 @@
 const { ObjectId } = require('mongodb');
 
 // Validate required fields for new order
-const validateOrderForCreate = (order) => {
+const validateOrderForCreate = async (order, db) => {
     if (!order.items || !Array.isArray(order.items) || order.items.length === 0) {
         return 'The "items" array is required and cannot be empty.';
     }
-    if (!order.tableNumber || typeof order.tableNumber !== 'number') {
-        return '"tableNumber" is required and must be a number.';
+
+    // Validate tableId exists
+    if (!order.tableId) {
+        return 'tableId is required.';
+    }
+    try {
+        const table = await db.collection('tables').findOne({ _id: new ObjectId(order.tableId) });
+        if (!table) {
+            return 'Invalid tableId - table not found.';
+        }
+    } catch (err) {
+        return 'Invalid tableId format.';
+    }
+
+    // Validate employeeId exists
+    if (!order.employeeId) {
+        return 'employeeId is required.';
+    }
+    try {
+        const employee = await db.collection('employees').findOne({ _id: new ObjectId(order.employeeId) });
+        if (!employee) {
+            return 'Invalid employeeId - employee not found.';
+        }
+    } catch (err) {
+        return 'Invalid employeeId format.';
+    }
+
+    // Validate each menu item exists
+    for (const item of order.items) {
+        if (!item.menuItemId || !item.quantity) {
+            return 'Each item must have menuItemId and quantity.';
+        }
+        try {
+            const menuItem = await db.collection('menuItems').findOne({ _id: new ObjectId(item.menuItemId) });
+            if (!menuItem) {
+                return `Invalid menuItemId - item not found: ${item.menuItemId}`;
+            }
+        } catch (err) {
+            return `Invalid menuItemId format: ${item.menuItemId}`;
+        }
     }
    
-    if (!order.status || typeof order.status !== 'string') {
-        return '"status" is required and must be a string (e.g., "received").';
+    if (!order.status || !['received', 'preparing', 'ready', 'served', 'completed', 'cancelled'].includes(order.status)) {
+        return 'status must be one of: received, preparing, ready, served, completed, cancelled';
     }
+
+    if (typeof order.total !== 'number' || order.total <= 0) {
+        return 'total must be a positive number';
+    }
+
     return null;
 };
 
@@ -59,11 +102,22 @@ const getSingle = async (req, res) => {
 // POST a new order
 const create = async (req, res) => {
     try {
-        const newOrder = req.body;
-        const validationError = validateOrderForCreate(newOrder);
+        const newOrder = {
+            ...req.body,
+            createdAt: new Date(),
+            status: req.body.status || 'received'
+        };
+
+        const validationError = await validateOrderForCreate(newOrder, req.db);
         if (validationError) {
             return res.status(400).json({ message: validationError });
         }
+
+        // Update table status to occupied
+        await req.db.collection('tables').updateOne(
+            { _id: new ObjectId(newOrder.tableId) },
+            { $set: { status: 'occupied' } }
+        );
 
         const response = await req.db.collection('orders').insertOne(newOrder);
         if (response.acknowledged) {
