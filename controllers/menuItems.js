@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongodb');
 
-// Validation function for menu items
+// Validate required menu item fields
 const validateMenuItem = (item) => {
     if (!item.name || !item.price || !item.description) {
         return 'Name, price, and description are required fields.';
@@ -8,7 +8,7 @@ const validateMenuItem = (item) => {
     if (typeof item.price !== 'number') {
         return 'Price must be a number.';
     }
-    return null; // Indicates validation passed
+    return null; 
 };
 
 // GET all menu items
@@ -80,12 +80,12 @@ const update = async (req, res) => {
         if (response.modifiedCount > 0) {
             res.status(204).send();
         } else {
-            // This could also mean the item was not found
+            
             const itemExists = await req.db.collection('menuItems').findOne({ _id: itemId });
             if (!itemExists) {
                 return res.status(404).json({ message: 'Menu item not found' });
             }
-            res.status(204).send(); // No changes were made, but the request is OK.
+            res.status(204).send(); 
         }
     } catch (err) {
         res.status(500).json({ message: err.message });

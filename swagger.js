@@ -13,8 +13,8 @@ const doc = {
     Note: POST, PUT, and DELETE operations require authentication.`,
     version: '1.0.0',
   },
-  hideModels: true, // Oculta la sección de modelos
-  hideSchemas: true, // Oculta los schemas
+  hideModels: true, 
+  hideSchemas: true, 
   host: 'cse341-p-wfbq.onrender.com',
   schemes: ['https'],
   tags: [
@@ -57,7 +57,6 @@ const doc = {
 };
 
 const outputFile = './swagger.json';
-const endpointsFiles = ['./routes/index.js']; // Point to your main router file
+const endpointsFiles = ['./routes/index.js']; 
 
-// generate swagger.json
 swaggerAutogen(outputFile, endpointsFiles, doc);

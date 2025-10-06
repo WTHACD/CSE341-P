@@ -12,17 +12,17 @@ const swaggerDocument = require('./swagger.json');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// CORS configuration
+// Basic middleware setup
 app.use(cors({
-  origin: true, // This allows all origins
+  origin: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(bodyParser.json());
 
-// Session setup
-app.set('trust proxy', 1); // trust first proxy
+// Trust first proxy for secure cookies
+app.set('trust proxy', 1);
 
 app.use(
   session({
@@ -33,7 +33,7 @@ app.use(
     cookie: {
       secure: true,
       httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 24 * 60 * 60 * 1000, 
       sameSite: 'none',
     },
     name: 'sessionId'
@@ -77,7 +77,7 @@ passport.use(
       callbackURL: process.env.NODE_ENV === 'production'
         ? 'https://cse341-p-wfbq.onrender.com/auth/github/callback'
         : 'http://localhost:3000/auth/github/callback',
-      scope: ['user:email'] // Request email scope
+      scope: ['user:email'] 
     },
     function (accessToken, refreshToken, profile, done) {
       // Log the profile for debugging

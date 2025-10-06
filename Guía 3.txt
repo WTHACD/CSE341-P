@@ -1,0 +1,43 @@
+Resumen de lo que Hicimos:
+Instalamos y configuramos Passport, express-session y bcrypt para un sistema de login robusto.
+Creamos nuevos endpoints (/auth/register, /auth/login, /auth/logout) para manejar las cuentas de usuario.
+Aseguramos las contraseñas encriptándolas automáticamente antes de guardarlas en la base de datos.
+Protegimos las rutas POST, PUT y DELETE de menuItems y orders. Ahora solo usuarios autenticados pueden usarlas.
+Actualizamos tu documentación de Swagger para reflejar todos estos cambios de seguridad.
+¿Cómo Probar la Nueva Funcionalidad?
+Ahora puedes probar todo el flujo en tu localhost. Sigue estos pasos en orden:
+
+Inicia tu servidor: En la terminal, ejecuta npm start.
+
+Explora Swagger: Abre http://localhost:3000/api-docs en tu navegador. Verás los nuevos endpoints de /auth y un candado 🔒 junto a las rutas protegidas.
+
+Prueba la Protección (Fallo Esperado):
+
+Intenta crear un nuevo ítem con POST /menuItems.
+Resultado: Debería fallar con un error 401 Unauthorized, porque no has iniciado sesión.
+Crea una Cuenta:
+
+Usa el endpoint POST /auth/register.
+En el body, envía un nuevo usuario y contraseña. Ejemplo:
+{
+  "username": "testuser",
+  "password": "password123"
+}
+Resultado: Deberías obtener un 201 Created.
+Inicia Sesión:
+
+Usa el endpoint POST /auth/login con las mismas credenciales.
+Resultado: Deberías obtener un 200 OK. Tu navegador ahora guardará una cookie de sesión.
+Prueba la Protección de Nuevo (Éxito Esperado):
+
+Vuelve a POST /menuItems e intenta crear un ítem de nuevo.
+Resultado: ¡Esta vez debería funcionar! Recibirás un 201 Created. Swagger usará automáticamente la cookie de sesión.
+Cierra Sesión:
+
+Usa el endpoint GET /auth/logout.
+Resultado: Deberías obtener un 200 OK.
+Prueba Final:
+
+Intenta usar POST /menuItems una última vez.
+Resultado: Debería fallar de nuevo con 401 Unauthorized, confirmando que la sesión se cerró correctamente.
+¡Felicidades! Ahora tienes una API mucho más segura y profesional.

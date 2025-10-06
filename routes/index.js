@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 
-// --- Auth Routes ---
-// Check authentication status
+// Authentication Routes
+// Check if user is authenticated
 router.get('/auth/status', /* #swagger.tags = ['Authentication'] */ (req, res) => {
   console.log('Status Check - Session:', req.session);
   console.log('Status Check - User:', req.user);
@@ -43,13 +43,11 @@ router.get('/auth/github/callback', /* #swagger.ignore = true */
     failureMessage: true,
     session: true
   }),
-  (req, res) => {
-    // Log para depuración
+  (req, res) => { 
     console.log('Auth callback - User:', req.user);
     console.log('Auth callback - Session:', req.session);
     
-    // Forzar guardado de sesión
-    req.session.save((err) => {
+      req.session.save((err) => {
       if (err) {
         console.error('Session save error:', err);
         return res.status(500).json({ error: 'Failed to save session' });

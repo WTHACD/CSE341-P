@@ -1,6 +1,6 @@
 const { ObjectId } = require('mongodb');
 
-// Validation for creating a new order
+// Validate required fields for new order
 const validateOrderForCreate = (order) => {
     if (!order.items || !Array.isArray(order.items) || order.items.length === 0) {
         return 'The "items" array is required and cannot be empty.';
@@ -8,7 +8,7 @@ const validateOrderForCreate = (order) => {
     if (!order.tableNumber || typeof order.tableNumber !== 'number') {
         return '"tableNumber" is required and must be a number.';
     }
-    // A new order should probably have a status
+   
     if (!order.status || typeof order.status !== 'string') {
         return '"status" is required and must be a string (e.g., "received").';
     }
@@ -16,13 +16,11 @@ const validateOrderForCreate = (order) => {
 };
 
 // Validation for updating an order
-const validateOrderForUpdate = (order) => {
-    // When updating, we might only get a subset of fields.
-    // Let's ensure if a status is provided, it's valid.
+const validateOrderForUpdate = (order) => {   
     if (order.status && typeof order.status !== 'string') {
         return '"status" must be a string.';
     }
-    // Add other checks as needed, e.g., for items or tableNumber if they are allowed to be updated.
+    
     return null;
 };
 
@@ -103,7 +101,7 @@ const update = async (req, res) => {
             if (!orderExists) {
                 return res.status(404).json({ message: 'Order not found' });
             }
-            res.status(204).send(); // No changes made, but request is OK.
+            res.status(204).send(); 
         }
     } catch (err) {
         res.status(500).json({ message: err.message });
