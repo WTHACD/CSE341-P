@@ -493,13 +493,70 @@
         "tags": [
           "Tables"
         ],
-        "description": "",
+        "description": "Create a new table with the specified details",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Table information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tableNumber": {
+                  "type": "number",
+                  "example": 1
+                },
+                "capacity": {
+                  "type": "number",
+                  "example": 4
+                },
+                "status": {
+                  "type": "string",
+                  "example": "available"
+                },
+                "location": {
+                  "type": "string",
+                  "example": "Interior"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Table successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Table created successfully"
+                },
+                "tableId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Validation error message"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -540,24 +597,52 @@
         "tags": [
           "Tables"
         ],
-        "description": "",
+        "description": "Update an existing table\\'s information",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the table to update"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Updated table information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tableNumber": {
+                  "type": "number",
+                  "example": 1
+                },
+                "capacity": {
+                  "type": "number",
+                  "example": 6
+                },
+                "status": {
+                  "type": "string",
+                  "example": "available"
+                },
+                "location": {
+                  "type": "string",
+                  "example": "Terraza"
+                }
+              }
+            }
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Table successfully updated"
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Table not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -668,13 +753,82 @@
         "tags": [
           "Employees"
         ],
-        "description": "",
+        "description": "Create a new employee with the specified details",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Employee information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "Waiter"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john.doe@restaurant.com"
+                },
+                "phoneNumber": {
+                  "type": "string",
+                  "example": "123-456-7890"
+                },
+                "hireDate": {
+                  "type": "string",
+                  "example": "2025-10-06"
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Employee successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Employee created successfully"
+                },
+                "employeeId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Validation error message"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
@@ -715,24 +869,64 @@
         "tags": [
           "Employees"
         ],
-        "description": "",
+        "description": "Update an existing employee\\'s information",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID of the employee to update"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Updated employee information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                  "example": "John"
+                },
+                "lastName": {
+                  "type": "string",
+                  "example": "Doe"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "Manager"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john.doe@restaurant.com"
+                },
+                "phoneNumber": {
+                  "type": "string",
+                  "example": "123-456-7890"
+                },
+                "hireDate": {
+                  "type": "string",
+                  "example": "2025-10-06"
+                },
+                "isActive": {
+                  "type": "boolean",
+                  "example": true
+                }
+              }
+            }
           }
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Employee successfully updated"
           },
           "400": {
             "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Employee not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -849,10 +1043,42 @@
         ],
         "responses": {
           "201": {
-            "description": "Created"
+            "description": "Created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Table created successfully"
+                },
+                "employeeId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                },
+                "tableId": {
+                  "type": "string",
+                  "example": "507f1f77bcf86cd799439011"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Validation error message"
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"

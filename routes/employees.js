@@ -33,11 +33,70 @@ router.get('/:id/orders', /* #swagger.tags = ['Employees'] */ employeesControlle
 
 // #swagger.tags = ['Employees']
 // Create a new employee (requires authentication)
-router.post('/', /* #swagger.tags = ['Employees'] */ employeesController.create);
+router.post('/', /* 
+    #swagger.tags = ['Employees']
+    #swagger.description = 'Create a new employee with the specified details'
+    #swagger.parameters['obj'] = {
+        in: 'body',
+        description: 'Employee information',
+        required: true,
+        schema: {
+            firstName: 'John',
+            lastName: 'Doe',
+            role: 'Waiter',
+            email: 'john.doe@restaurant.com',
+            phoneNumber: '123-456-7890',
+            hireDate: '2025-10-06',
+            isActive: true
+        }
+    }
+    #swagger.responses[201] = {
+        description: 'Employee successfully created',
+        schema: {
+            message: 'Employee created successfully',
+            employeeId: '507f1f77bcf86cd799439011'
+        }
+    }
+    #swagger.responses[400] = {
+        description: 'Invalid input',
+        schema: {
+            message: 'Validation error message'
+        }
+    }
+*/ employeesController.create);
 
 // #swagger.tags = ['Employees']
 // Update an employee (requires authentication)
-router.put('/:id', /* #swagger.tags = ['Employees'] */ employeesController.update);
+router.put('/:id', /* 
+    #swagger.tags = ['Employees']
+    #swagger.description = 'Update an existing employee\'s information'
+    #swagger.parameters['id'] = {
+        in: 'path',
+        description: 'ID of the employee to update',
+        required: true,
+        type: 'string'
+    }
+    #swagger.parameters['obj'] = {
+        in: 'body',
+        description: 'Updated employee information',
+        required: true,
+        schema: {
+            firstName: 'John',
+            lastName: 'Doe',
+            role: 'Manager',
+            email: 'john.doe@restaurant.com',
+            phoneNumber: '123-456-7890',
+            hireDate: '2025-10-06',
+            isActive: true
+        }
+    }
+    #swagger.responses[204] = {
+        description: 'Employee successfully updated'
+    }
+    #swagger.responses[404] = {
+        description: 'Employee not found'
+    }
+*/ employeesController.update);
 
 // #swagger.tags = ['Employees']
 // Delete (deactivate) an employee (requires authentication)
