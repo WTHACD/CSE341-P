@@ -158,6 +158,52 @@
         }
       }
     },
+    "/menuItems/available": {
+      "get": {
+        "tags": [
+          "Menu Items"
+        ],
+        "description": "Get all available menu items to help create an order",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available menu items",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Pizza Margherita"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Classic pizza..."
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 12.5
+                  },
+                  "isAvailable": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/menuItems/{id}": {
       "get": {
         "tags": [
@@ -289,7 +335,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Get all orders with complete details including employee names, table information, and menu item details",
         "produces": [
           "application/json"
         ],
@@ -400,7 +446,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Get a single order with complete details including employee names, table information, and menu item details",
         "produces": [
           "application/json"
         ],
@@ -409,15 +455,19 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Order ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Order found successfully"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Order not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -428,17 +478,20 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Update an order status",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Order ID"
           },
           {
             "name": "body",
             "in": "body",
+            "description": "Order status update",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
@@ -452,7 +505,7 @@
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Order updated successfully"
           },
           "400": {
             "description": "Bad Request"
@@ -461,7 +514,7 @@
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Order not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -472,24 +525,25 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Delete an order",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Order ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Order deleted successfully"
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Order not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -598,6 +652,9 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -681,6 +738,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "404": {
             "description": "Table not found"
           },
@@ -705,6 +765,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -870,6 +933,9 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -965,6 +1031,9 @@
           "400": {
             "description": "Bad Request"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "404": {
             "description": "Employee not found"
           },
@@ -989,6 +1058,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -1020,6 +1092,9 @@
           "200": {
             "description": "OK"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1031,7 +1106,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Get all orders with complete details including employee names, table information, and menu item details",
         "produces": [
           "application/json"
         ],
@@ -1162,7 +1237,7 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Get a single order with complete details including employee names, table information, and menu item details",
         "produces": [
           "application/json"
         ],
@@ -1171,15 +1246,19 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Order ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Order found successfully"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Order not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1190,17 +1269,20 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Update an order status",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Order ID"
           },
           {
             "name": "body",
             "in": "body",
+            "description": "Order status update",
+            "required": true,
             "schema": {
               "type": "object",
               "properties": {
@@ -1214,7 +1296,7 @@
         ],
         "responses": {
           "204": {
-            "description": "No Content"
+            "description": "Order updated successfully"
           },
           "400": {
             "description": "Bad Request"
@@ -1223,7 +1305,7 @@
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Order not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1234,24 +1316,25 @@
         "tags": [
           "Orders"
         ],
-        "description": "",
+        "description": "Delete an order",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "Order ID"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Order deleted successfully"
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Order not found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1279,6 +1362,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1309,6 +1395,52 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/available": {
+      "get": {
+        "tags": [
+          "Menu Items"
+        ],
+        "description": "Get all available menu items to help create an order",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available menu items",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Pizza Margherita"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Classic pizza..."
+                  },
+                  "price": {
+                    "type": "number",
+                    "example": 12.5
+                  },
+                  "isAvailable": {
+                    "type": "boolean",
+                    "example": true
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error"
