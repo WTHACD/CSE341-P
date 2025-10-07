@@ -125,14 +125,42 @@ const deleteItem = async (req, res) => {
 const getCurrentOrder = async (req, res) => {
     try {
         const tableId = new ObjectId(req.params.id);
-        const result = await req.db.collection('orders').findOne({ 
+        const order = await req.db.collection('orders').findOne({ 
             tableId: tableId,
             status: { $in: ['received', 'preparing', 'served'] }
         });
 
-        if (result) {
+        if (order) {
+            const employee = await req.db.collection('employees').findOne(
+                { _id: order.employeeId },
+                { projection: { firstName: 1, lastName: 1 } }
+            );
+
+            const enrichedItems = await Promise.all(order.items.map(async (item) => {
+                const menuItem = await req.db.collection('menuItems').findOne(
+                    { _id: item.menuItemId },
+                    { projection: { name: 1, price: 1 } }
+                );
+                return {
+                    ...item,
+                    menuItem: menuItem ? {
+                        name: menuItem.name,
+                        price: menuItem.price
+                    } : null
+                };
+            }));
+
+            const enrichedOrder = {
+                ...order,
+                employee: employee ? {
+                    firstName: employee.firstName,
+                    lastName: employee.lastName,
+                } : null,
+                items: enrichedItems
+            };
+
             res.setHeader('Content-Type', 'application/json');
-            res.status(200).json(result);
+            res.status(200).json(enrichedOrder);
         } else {
             res.status(404).json({ message: 'No active order found for this table' });
         }

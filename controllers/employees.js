@@ -150,11 +150,49 @@ const deleteItem = async (req, res) => {
 const getOrders = async (req, res) => {
     try {
         const employeeId = new ObjectId(req.params.id);
-        const result = await req.db.collection('orders').find({ employeeId: employeeId });
-        result.toArray().then((lists) => {
-            res.setHeader('Content-Type', 'application/json');
-            res.status(200).json(lists);
-        });
+        const orders = await req.db.collection('orders').find({ employeeId: employeeId }).toArray();
+
+        const enrichedOrders = await Promise.all(orders.map(async (order) => {
+            const employee = await req.db.collection('employees').findOne(
+                { _id: order.employeeId },
+                { projection: { firstName: 1, lastName: 1 } }
+            );
+
+            const table = await req.db.collection('tables').findOne(
+                { _id: order.tableId },
+                { projection: { tableNumber: 1, location: 1 } }
+            );
+
+            const enrichedItems = await Promise.all(order.items.map(async (item) => {
+                const menuItem = await req.db.collection('menuItems').findOne(
+                    { _id: item.menuItemId },
+                    { projection: { name: 1, price: 1 } }
+                );
+                return {
+                    ...item,
+                    menuItem: menuItem ? {
+                        name: menuItem.name,
+                        price: menuItem.price
+                    } : null
+                };
+            }));
+
+            return {
+                ...order,
+                employee: employee ? {
+                    firstName: employee.firstName,
+                    lastName: employee.lastName,
+                } : null,
+                table: table ? {
+                    number: table.tableNumber,
+                    location: table.location
+                } : null,
+                items: enrichedItems
+            };
+        }));
+
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(enrichedOrders);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
