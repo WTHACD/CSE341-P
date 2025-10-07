@@ -121,48 +121,53 @@ const deleteItem = async (req, res) => {
     }
 };
 
-// GET current order for a table
+// GET current orders for a table
 const getCurrentOrder = async (req, res) => {
     try {
         const tableId = new ObjectId(req.params.id);
-        const order = await req.db.collection('orders').findOne({ 
+        // Use find() to get all matching orders
+        const ordersCursor = await req.db.collection('orders').find({ 
             tableId: tableId,
             status: { $in: ['received', 'preparing', 'served'] }
         });
 
-        if (order) {
-            const employee = await req.db.collection('employees').findOne(
-                { _id: order.employeeId },
-                { projection: { firstName: 1, lastName: 1 } }
-            );
+        const orders = await ordersCursor.toArray();
 
-            const enrichedItems = await Promise.all(order.items.map(async (item) => {
-                const menuItem = await req.db.collection('menuItems').findOne(
-                    { _id: item.menuItemId },
-                    { projection: { name: 1, price: 1 } }
+        if (orders.length > 0) {
+            const enrichedOrders = await Promise.all(orders.map(async (order) => {
+                const employee = await req.db.collection('employees').findOne(
+                    { _id: order.employeeId },
+                    { projection: { firstName: 1, lastName: 1 } }
                 );
+
+                const enrichedItems = await Promise.all(order.items.map(async (item) => {
+                    const menuItem = await req.db.collection('menuItems').findOne(
+                        { _id: item.menuItemId },
+                        { projection: { name: 1, price: 1 } }
+                    );
+                    return {
+                        ...item,
+                        menuItem: menuItem ? {
+                            name: menuItem.name,
+                            price: menuItem.price
+                        } : null
+                    };
+                }));
+
                 return {
-                    ...item,
-                    menuItem: menuItem ? {
-                        name: menuItem.name,
-                        price: menuItem.price
-                    } : null
+                    ...order,
+                    employee: employee ? {
+                        firstName: employee.firstName,
+                        lastName: employee.lastName,
+                    } : null,
+                    items: enrichedItems
                 };
             }));
 
-            const enrichedOrder = {
-                ...order,
-                employee: employee ? {
-                    firstName: employee.firstName,
-                    lastName: employee.lastName,
-                } : null,
-                items: enrichedItems
-            };
-
             res.setHeader('Content-Type', 'application/json');
-            res.status(200).json(enrichedOrder);
+            res.status(200).json(enrichedOrders);
         } else {
-            res.status(404).json({ message: 'No active order found for this table' });
+            res.status(404).json({ message: 'No active orders found for this table' });
         }
     } catch (err) {
         res.status(500).json({ message: err.message });

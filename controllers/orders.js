@@ -11,7 +11,7 @@ const validateOrderForCreate = async (order, db) => {
         return 'tableId is required.';
     }
     try {
-        const table = await db.collection('tables').findOne({ _id: order.tableId });
+        const table = await db.collection('tables').findOne({ _id: new ObjectId(order.tableId) });
         if (!table) {
             return 'Invalid tableId - table not found.';
         }
@@ -24,7 +24,7 @@ const validateOrderForCreate = async (order, db) => {
         return 'employeeId is required.';
     }
     try {
-        const employee = await db.collection('employees').findOne({ _id: order.employeeId });
+        const employee = await db.collection('employees').findOne({ _id: new ObjectId(order.employeeId) });
         if (!employee) {
             return 'Invalid employeeId - employee not found.';
         }
@@ -38,7 +38,7 @@ const validateOrderForCreate = async (order, db) => {
             return 'Each item must have menuItemId and quantity.';
         }
         try {
-            const menuItem = await db.collection('menuItems').findOne({ _id: item.menuItemId });
+            const menuItem = await db.collection('menuItems').findOne({ _id: new ObjectId(item.menuItemId) });
             if (!menuItem) {
                 return `Invalid menuItemId - item not found: ${item.menuItemId}`;
             }
@@ -47,13 +47,11 @@ const validateOrderForCreate = async (order, db) => {
         }
     }
    
-    if (!order.status || !['received', 'preparing', 'ready', 'served', 'completed', 'cancelled'].includes(order.status)) {
+    if (order.status && !['received', 'preparing', 'ready', 'served', 'completed', 'cancelled'].includes(order.status)) {
         return 'status must be one of: received, preparing, ready, served, completed, cancelled';
     }
 
-    if (typeof order.total !== 'number' || order.total <= 0) {
-        return 'total must be a positive number';
-    }
+    // Total validation is removed as it is now calculated on the server.
 
     return null;
 };
@@ -197,39 +195,78 @@ const getSingle = async (req, res) => {
 // POST a new order
 const create = async (req, res) => {
     try {
+        const { items, tableId, employeeId, specialInstructions } = req.body;
+
+        // --- 1. Basic Input Validation ---
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            return res.status(400).json({ message: 'Order must include at least one item.' });
+        }
+        if (!tableId || !employeeId) {
+            return res.status(400).json({ message: 'tableId and employeeId are required.' });
+        }
+
+        let calculatedTotal = 0;
+        const processedItems = [];
+
+        // --- 2. Process Items and Calculate Total ---
+        for (const item of items) {
+            if (!item.menuItemId || !item.quantity || item.quantity <= 0) {
+                return res.status(400).json({ message: `Each item must have a valid menuItemId and a positive quantity.` });
+            }
+
+            const menuItem = await req.db.collection('menuItems').findOne({ _id: new ObjectId(item.menuItemId) });
+
+            if (!menuItem) {
+                return res.status(400).json({ message: `Menu item with ID ${item.menuItemId} not found.` });
+            }
+            if (typeof menuItem.price !== 'number') {
+                return res.status(500).json({ message: `Price for menu item ${menuItem.name} is not configured correctly.` });
+            }
+
+            calculatedTotal += menuItem.price * item.quantity;
+            processedItems.push({
+                menuItemId: new ObjectId(item.menuItemId),
+                quantity: item.quantity,
+                notes: item.notes || ''
+            });
+        }
+
+        // --- 3. Construct the Order Object ---
         const newOrder = {
-            ...req.body,
-            createdAt: new Date(),
-            status: req.body.status || 'received',
-            tableId: new ObjectId(req.body.tableId),
-            employeeId: new ObjectId(req.body.employeeId),
-            items: req.body.items.map(item => ({
-                ...item,
-                menuItemId: new ObjectId(item.menuItemId)
-            }))
+            items: processedItems,
+            tableId: new ObjectId(tableId),
+            employeeId: new ObjectId(employeeId),
+            status: 'received', // Default status
+            specialInstructions: specialInstructions || '',
+            total: parseFloat(calculatedTotal.toFixed(2)), // Use server-calculated total and fix floating point issues
+            createdAt: new Date()
         };
 
+        // --- 4. Advanced Validation ---
         const validationError = await validateOrderForCreate(newOrder, req.db);
         if (validationError) {
             return res.status(400).json({ message: validationError });
         }
 
-        // Update table status to occupied
+        // --- 5. Update Table Status ---
         await req.db.collection('tables').updateOne(
             { _id: newOrder.tableId },
             { $set: { status: 'occupied' } }
         );
 
+        // --- 6. Insert Order ---
         const response = await req.db.collection('orders').insertOne(newOrder);
         if (response.acknowledged) {
             res.status(201).json({
                 message: 'Order created successfully',
-                orderId: response.insertedId
+                orderId: response.insertedId,
+                total: newOrder.total
             });
         } else {
-            res.status(500).json({ message: 'Some error occurred while creating the order.' });
+            res.status(500).json({ message: 'An error occurred while creating the order.' });
         }
     } catch (err) {
+        // Catch errors from new ObjectId() if format is wrong
         res.status(500).json({ message: err.message });
     }
 };
