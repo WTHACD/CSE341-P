@@ -6,6 +6,12 @@ const { isAuthenticated } = require('../middleware/auth');
 // GET all menu items
 router.get('/', /* #swagger.tags = ['Menu Items'] */ menuItemsController.getAll);
 
+// GET all available menu items
+router.get('/available', /* 
+    #swagger.tags = ['Menu Items']
+    #swagger.description = 'Get all available menu items to help create an order'
+*/ menuItemsController.getAvailableItems);
+
 // GET a single menu item by ID
 router.get('/:id', /* #swagger.tags = ['Menu Items'] */ menuItemsController.getSingle);
 

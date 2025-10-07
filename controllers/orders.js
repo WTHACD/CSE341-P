@@ -131,6 +131,9 @@ const getAll = async (req, res) => {
 // GET a single order by ID
 const getSingle = async (req, res) => {
     try {
+        if (!ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: 'Invalid Order ID format.' });
+        }
         const orderId = new ObjectId(req.params.id);
         const order = await req.db.collection('orders').findOne({ _id: orderId });
         
@@ -330,39 +333,12 @@ const deleteItem = async (req, res) => {
 };
 
 
-// GET available menu items for order creation
-const getAvailableItems = async (req, res) => {
-    try {
-        const availableItems = await req.db.collection('menuItems')
-            .find({ isAvailable: true })
-            .project({
-                name: 1,
-                price: 1,
-                category: 1,
-                description: 1
-            })
-            .toArray();
 
-        const formattedItems = availableItems.map(item => ({
-            id: item._id,
-            name: item.name,
-            price: item.price,
-            category: item.category,
-            description: item.description
-        }));
-
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(formattedItems);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
 
 module.exports = {
     getAll,
     getSingle,
     create,
     update,
-    deleteItem,
-    getAvailableItems
+    deleteItem
 };

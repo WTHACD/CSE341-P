@@ -112,5 +112,6 @@ module.exports = {
     getSingle,
     create,
     update,
-    deleteItem
+    deleteItem,
+    getAvailableItems
 };

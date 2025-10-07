@@ -8,10 +8,7 @@ router.get('/', /*
     #swagger.description = 'Get all orders with complete details including employee names, table information, and menu item details'
 */ ordersController.getAll);
 
-router.get('/available-items', /* 
-    #swagger.tags = ['Orders']
-    #swagger.description = 'Get all available menu items to help create an order'
-*/ ordersController.getAvailableItems);
+
 
 router.get('/:id', /* 
     #swagger.tags = ['Orders']
