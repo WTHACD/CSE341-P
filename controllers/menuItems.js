@@ -107,6 +107,20 @@ const deleteItem = async (req, res) => {
     }
 };
 
+// GET all available menu items
+const getAvailableItems = async (req, res) => {
+    try {
+        const result = await req.db.collection('menuItems')
+            .find({ isAvailable: true })
+            .toArray();
+        
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(result);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 module.exports = {
     getAll,
     getSingle,

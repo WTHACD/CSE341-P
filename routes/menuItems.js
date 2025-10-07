@@ -10,6 +10,15 @@ router.get('/', /* #swagger.tags = ['Menu Items'] */ menuItemsController.getAll)
 router.get('/available', /* 
     #swagger.tags = ['Menu Items']
     #swagger.description = 'Get all available menu items to help create an order'
+    #swagger.responses[200] = {
+        description: 'List of available menu items',
+        schema: [{
+            name: 'Pizza Margherita',
+            description: 'Classic pizza...',
+            price: 12.50,
+            isAvailable: true
+        }]
+    }
 */ menuItemsController.getAvailableItems);
 
 // GET a single menu item by ID
