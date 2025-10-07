@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 const tablesController = require('../controllers/tables');
 
 // #swagger.tags = ['Tables']
@@ -25,7 +26,7 @@ router.get('/:id/order', /* #swagger.tags = ['Tables'] */ tablesController.getCu
 
 // #swagger.tags = ['Tables']
 // Create a new table
-router.post('/', /* 
+router.post('/', isAuthenticated, /* 
     #swagger.tags = ['Tables']
     #swagger.description = 'Create a new table with the specified details'
     #swagger.parameters['obj'] = {
@@ -56,7 +57,7 @@ router.post('/', /*
 
 // #swagger.tags = ['Tables']
 // Update a table
-router.put('/:id', /* 
+router.put('/:id', isAuthenticated, /* 
     #swagger.tags = ['Tables']
     #swagger.description = 'Update an existing table\'s information'
     #swagger.parameters['id'] = {
@@ -86,6 +87,6 @@ router.put('/:id', /*
 
 // #swagger.tags = ['Tables']
 // Delete a table
-router.delete('/:id', /* #swagger.tags = ['Tables'] */ tablesController.deleteItem);
+router.delete('/:id', isAuthenticated, /* #swagger.tags = ['Tables'] */ tablesController.deleteItem);
 
 module.exports = router;

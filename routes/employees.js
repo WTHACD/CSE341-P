@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { isAuthenticated } = require('../middleware/auth');
 
 const employeesController = require('../controllers/employees');
 
@@ -33,7 +34,7 @@ router.get('/:id/orders', /* #swagger.tags = ['Employees'] */ employeesControlle
 
 // #swagger.tags = ['Employees']
 // Create a new employee (requires authentication)
-router.post('/', /* 
+router.post('/', isAuthenticated, /* 
     #swagger.tags = ['Employees']
     #swagger.description = 'Create a new employee with the specified details'
     #swagger.parameters['obj'] = {
@@ -67,7 +68,7 @@ router.post('/', /*
 
 // #swagger.tags = ['Employees']
 // Update an employee (requires authentication)
-router.put('/:id', /* 
+router.put('/:id', isAuthenticated, /* 
     #swagger.tags = ['Employees']
     #swagger.description = 'Update an existing employee\'s information'
     #swagger.parameters['id'] = {
@@ -100,6 +101,6 @@ router.put('/:id', /*
 
 // #swagger.tags = ['Employees']
 // Delete (deactivate) an employee (requires authentication)
-router.delete('/:id', /* #swagger.tags = ['Employees'] */ employeesController.deleteItem);
+router.delete('/:id', isAuthenticated, /* #swagger.tags = ['Employees'] */ employeesController.deleteItem);
 
 module.exports = router;
