@@ -23,6 +23,7 @@ router.get('/:id', /*
         description: 'Order not found'
     }
 */ ordersController.getSingle);
+
 router.post('/', isAuthenticated, /* 
     #swagger.tags = ['Orders']
     #swagger.description = 'Create a new order with menu items, table, and employee information'
@@ -56,6 +57,7 @@ router.post('/', isAuthenticated, /*
         description: 'Invalid input'
     }
 */ ordersController.create);
+
 router.put('/:id', isAuthenticated, /* 
     #swagger.tags = ['Orders']
     #swagger.description = 'Update an order status'
