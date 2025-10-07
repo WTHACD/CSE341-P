@@ -8,11 +8,20 @@ router.get('/', /*
     #swagger.description = 'Get all orders with complete details including employee names, table information, and menu item details'
 */ ordersController.getAll);
 
-
-
 router.get('/:id', /* 
     #swagger.tags = ['Orders']
     #swagger.description = 'Get a single order with complete details including employee names, table information, and menu item details'
+    #swagger.parameters['id'] = {
+        description: 'Order ID',
+        required: true,
+        type: 'string'
+    }
+    #swagger.responses[200] = {
+        description: 'Order found successfully'
+    }
+    #swagger.responses[404] = {
+        description: 'Order not found'
+    }
 */ ordersController.getSingle);
 router.post('/', isAuthenticated, /* 
     #swagger.tags = ['Orders']
@@ -47,7 +56,44 @@ router.post('/', isAuthenticated, /*
         description: 'Invalid input'
     }
 */ ordersController.create);
-router.put('/:id', isAuthenticated, /* #swagger.tags = ['Orders'] */ /* #swagger.parameters['body'] = { in: 'body', schema: { status: 'preparing' } } */ ordersController.update);
-router.delete('/:id', isAuthenticated, /* #swagger.tags = ['Orders'] */ ordersController.deleteItem);
+router.put('/:id', isAuthenticated, /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Update an order status'
+    #swagger.parameters['id'] = {
+        description: 'Order ID',
+        required: true,
+        type: 'string'
+    }
+    #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Order status update',
+        required: true,
+        schema: {
+            status: 'preparing'
+        }
+    }
+    #swagger.responses[204] = {
+        description: 'Order updated successfully'
+    }
+    #swagger.responses[404] = {
+        description: 'Order not found'
+    }
+*/ ordersController.update);
+
+router.delete('/:id', isAuthenticated, /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Delete an order'
+    #swagger.parameters['id'] = {
+        description: 'Order ID',
+        required: true,
+        type: 'string'
+    }
+    #swagger.responses[200] = {
+        description: 'Order deleted successfully'
+    }
+    #swagger.responses[404] = {
+        description: 'Order not found'
+    }
+*/ ordersController.deleteItem);
 
 module.exports = router;
