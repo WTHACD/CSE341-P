@@ -11,7 +11,7 @@ const validateOrderForCreate = async (order, db) => {
         return 'tableId is required.';
     }
     try {
-        const table = await db.collection('tables').findOne({ _id: new ObjectId(order.tableId) });
+        const table = await db.collection('tables').findOne({ _id: order.tableId });
         if (!table) {
             return 'Invalid tableId - table not found.';
         }
@@ -24,7 +24,7 @@ const validateOrderForCreate = async (order, db) => {
         return 'employeeId is required.';
     }
     try {
-        const employee = await db.collection('employees').findOne({ _id: new ObjectId(order.employeeId) });
+        const employee = await db.collection('employees').findOne({ _id: order.employeeId });
         if (!employee) {
             return 'Invalid employeeId - employee not found.';
         }
@@ -38,7 +38,7 @@ const validateOrderForCreate = async (order, db) => {
             return 'Each item must have menuItemId and quantity.';
         }
         try {
-            const menuItem = await db.collection('menuItems').findOne({ _id: new ObjectId(item.menuItemId) });
+            const menuItem = await db.collection('menuItems').findOne({ _id: item.menuItemId });
             if (!menuItem) {
                 return `Invalid menuItemId - item not found: ${item.menuItemId}`;
             }
@@ -78,14 +78,14 @@ const getAll = async (req, res) => {
             // Obtener información del empleado
             const employee = order.employeeId ? 
                 await req.db.collection('employees').findOne(
-                    { _id: new ObjectId(order.employeeId) },
+                    { _id: order.employeeId },
                     { projection: { firstName: 1, lastName: 1, role: 1 } }
                 ) : null;
 
             // Obtener información de la mesa
             const table = order.tableId ?
                 await req.db.collection('tables').findOne(
-                    { _id: new ObjectId(order.tableId) },
+                    { _id: order.tableId },
                     { projection: { tableNumber: 1, location: 1 } }
                 ) : null;
 
@@ -93,7 +93,7 @@ const getAll = async (req, res) => {
             const enrichedItems = await Promise.all(order.items.map(async (item) => {
                 const menuItem = item.menuItemId ?
                     await req.db.collection('menuItems').findOne(
-                        { _id: new ObjectId(item.menuItemId) },
+                        { _id: item.menuItemId },
                         { projection: { name: 1, price: 1 } }
                     ) : null;
                 
@@ -143,14 +143,14 @@ const getSingle = async (req, res) => {
         // Obtener información del empleado
         const employee = order.employeeId ? 
             await req.db.collection('employees').findOne(
-                { _id: new ObjectId(order.employeeId) },
+                { _id: order.employeeId },
                 { projection: { firstName: 1, lastName: 1, role: 1 } }
             ) : null;
 
         // Obtener información de la mesa
         const table = order.tableId ?
             await req.db.collection('tables').findOne(
-                { _id: new ObjectId(order.tableId) },
+                { _id: order.tableId },
                 { projection: { tableNumber: 1, location: 1 } }
             ) : null;
 
@@ -158,7 +158,7 @@ const getSingle = async (req, res) => {
         const enrichedItems = await Promise.all(order.items.map(async (item) => {
             const menuItem = item.menuItemId ?
                 await req.db.collection('menuItems').findOne(
-                    { _id: new ObjectId(item.menuItemId) },
+                    { _id: item.menuItemId },
                     { projection: { name: 1, price: 1 } }
                 ) : null;
             
@@ -200,7 +200,13 @@ const create = async (req, res) => {
         const newOrder = {
             ...req.body,
             createdAt: new Date(),
-            status: req.body.status || 'received'
+            status: req.body.status || 'received',
+            tableId: new ObjectId(req.body.tableId),
+            employeeId: new ObjectId(req.body.employeeId),
+            items: req.body.items.map(item => ({
+                ...item,
+                menuItemId: new ObjectId(item.menuItemId)
+            }))
         };
 
         const validationError = await validateOrderForCreate(newOrder, req.db);
@@ -210,7 +216,7 @@ const create = async (req, res) => {
 
         // Update table status to occupied
         await req.db.collection('tables').updateOne(
-            { _id: new ObjectId(newOrder.tableId) },
+            { _id: newOrder.tableId },
             { $set: { status: 'occupied' } }
         );
 
@@ -237,6 +243,20 @@ const update = async (req, res) => {
         const validationError = validateOrderForUpdate(orderUpdate);
         if (validationError) {
             return res.status(400).json({ message: validationError });
+        }
+
+        // Convert IDs from string to ObjectId if they exist in the update body
+        if (orderUpdate.tableId) {
+            orderUpdate.tableId = new ObjectId(orderUpdate.tableId);
+        }
+        if (orderUpdate.employeeId) {
+            orderUpdate.employeeId = new ObjectId(orderUpdate.employeeId);
+        }
+        if (orderUpdate.items) {
+            orderUpdate.items = orderUpdate.items.map(item => ({
+                ...item,
+                menuItemId: new ObjectId(item.menuItemId)
+            }));
         }
 
         const updatedFields = {
