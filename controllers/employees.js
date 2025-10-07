@@ -150,6 +150,13 @@ const deleteItem = async (req, res) => {
 const getOrders = async (req, res) => {
     try {
         const employeeId = new ObjectId(req.params.id);
+
+        // First check if employee exists
+        const employeeExists = await req.db.collection('employees').findOne({ _id: employeeId });
+        if (!employeeExists) {
+            return res.status(404).json({ message: 'Employee not found' });
+        }
+
         const orders = await req.db.collection('orders').find({ employeeId: employeeId }).toArray();
 
         const enrichedOrders = await Promise.all(orders.map(async (order) => {
