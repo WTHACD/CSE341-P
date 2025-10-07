@@ -11,7 +11,16 @@ const connectToDb = async () => {
         return db;
     }
     try {
-        client = await MongoClient.connect(uri);
+        // Agregamos opciones de conexión para mejor rendimiento
+        const options = {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            maxPoolSize: 10,
+            serverSelectionTimeoutMS: 5000,
+            socketTimeoutMS: 45000,
+        };
+        
+        client = await MongoClient.connect(uri, options);
         db = client.db();
         console.log('Connected to MongoDB');
         return db;
