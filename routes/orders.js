@@ -8,6 +8,20 @@ router.get('/', /*
     #swagger.description = 'Get all orders with complete details including employee names, table information, and menu item details'
 */ ordersController.getAll);
 
+router.get('/available-items', /* 
+    #swagger.tags = ['Orders']
+    #swagger.description = 'Get all available menu items that can be ordered'
+    #swagger.responses[200] = {
+        description: 'List of available menu items',
+        schema: [{
+            _id: '507f1f77bcf86cd799439011',
+            name: 'Pizza Margarita',
+            price: 12.99,
+            description: 'Classic Italian pizza with tomato and mozzarella'
+        }]
+    }
+*/ ordersController.getAvailableItems);
+
 router.get('/:id', /* 
     #swagger.tags = ['Orders']
     #swagger.description = 'Get a single order with complete details including employee names, table information, and menu item details'

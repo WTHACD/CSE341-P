@@ -40,3 +40,27 @@ jest.mock('express-session', () => () => (req, res, next) => {
     req.isAuthenticated = () => global.mockAuthenticatedState;
     next();
 });
+
+describe('Test Setup Configuration', () => {
+    it('should have GitHub Strategy properly mocked', () => {
+        const { Strategy } = require('passport-github2');
+        const mockStrategy = new Strategy({}, () => {});
+        expect(mockStrategy).toBeDefined();
+        expect(mockStrategy.options).toBeDefined();
+        expect(mockStrategy.callback).toBeDefined();
+    });
+
+    it('should handle authentication state correctly', () => {
+        const req = { };
+        const res = { };
+        const next = jest.fn();
+        
+        const session = require('express-session')();
+        session(req, res, next);
+        
+        expect(req.isAuthenticated()).toBe(false);
+        global.mockAuthenticatedState = true;
+        expect(req.isAuthenticated()).toBe(true);
+        global.mockAuthenticatedState = false;
+    });
+});
